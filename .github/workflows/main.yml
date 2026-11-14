@@ -1,5 +1,36 @@
-msbuild SurvivalMoves.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU /verbosity:minimal
-Test-Path "bin/Release/SurvivalMoves.dll"
-git add .
-git commit -m "Build SurvivalMoves"
-git push origin main
+
+name: Build SurvivalMoves
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build SurvivalMoves
+        run: msbuild SurvivalMoves.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU
+        shell: pwsh
+
+      - name: Verify DLL
+        run: |
+          if (!(Test-Path "bin/Release/SurvivalMoves.dll")) {
+            throw "SurvivalMoves.dll not found"
+          }
+        shell: pwsh
+
+      - name: Upload DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: SurvivalMoves-net48
+          path: bin/Release/SurvivalMoves.dll
