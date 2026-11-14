@@ -1,0 +1,5 @@
+msbuild SurvivalMoves.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU /verbosity:minimal
+Test-Path "bin/Release/SurvivalMoves.dll"
+git add .
+git commit -m "Build SurvivalMoves"
+git push origin main
